@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Welcome</title>
+</head>
+<body>
+    <div id="WelcomeConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox,emby-select">
+        <div data-role="content">
+            <div class="content-primary">
+                <style>
+                    #WelcomeConfigPage .wl-card { border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 14px 16px; margin: 10px 0; }
+                    #WelcomeConfigPage .wl-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+                    #WelcomeConfigPage .wl-grow { flex: 1; min-width: 200px; }
+                    #WelcomeConfigPage .wl-muted { opacity: .7; font-size: .9em; }
+                    #WelcomeConfigPage .wl-link { font-family: monospace; word-break: break-all; padding: 10px; border-radius: 8px; background: rgba(255,255,255,.06); }
+                    #WelcomeConfigPage .wl-note { margin: 8px 0 0; padding: 8px 10px; border-left: 3px solid #f0a04b; background: rgba(240,160,75,.08); white-space: pre-wrap; }
+                    #WelcomeConfigPage .wl-pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .85em; background: rgba(255,255,255,.1); }
+                    #WelcomeConfigPage .wl-pill.pending { background: #f0a04b; color: #2a1a06; }
+                    #WelcomeConfigPage .wl-pill.done { background: #2f6b46; }
+                    #WelcomeConfigPage button.wl-small { width: auto; margin: 0; }
+                    #WelcomeConfigPage textarea.wl-text { width: 100%; box-sizing: border-box; min-height: 5em; padding: .6em; border-radius: 6px; font: inherit; background: rgba(255,255,255,.06); color: inherit; border: 1px solid rgba(255,255,255,.15); }
+                </style>
+
+                <h2>Invite someone</h2>
+                <div class="wl-row">
+                    <div class="inputContainer wl-grow" style="margin:0"><input is="emby-input" type="text" id="wlLabel" label="Who's it for?" maxlength="60" /></div>
+                    <button is="emby-button" type="button" id="wlCreate" class="raised button-submit wl-small"><span>Make invite link</span></button>
+                </div>
+                <div id="wlNew"></div>
+
+                <h2>Waiting for you</h2>
+                <div id="wlPending"><p class="wl-muted">Nobody right now.</p></div>
+
+                <h2>Invites</h2>
+                <div id="wlList"><p class="wl-muted">None yet.</p></div>
+
+                <h2 style="margin-top:2em">Settings</h2>
+                <form id="WelcomeConfigForm">
+                    <div class="inputContainer">
+                        <input is="emby-input" type="text" id="PublicUrl" label="Public address" />
+                        <div class="fieldDescription">The address people use from outside, for example https://jellyfin.example.com. Invite links, the app setup page and Discord links use it. Empty: links use the address the page was opened at, and Discord posts have no links.</div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="password" id="DiscordWebhookUrl" label="Discord webhook" autocomplete="off" />
+                        <div class="fieldDescription" id="wlHookState">Discord channel settings, Integrations, Webhooks, New Webhook, Copy Webhook URL. Stays on the server.</div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="InviteDays" label="Invite links last this many days" min="1" max="60" />
+                    </div>
+                    <div class="selectContainer">
+                        <select is="emby-select" id="TemplateUserId" label="New accounts copy their permissions from"></select>
+                        <div class="fieldDescription">Pick an existing (non-admin) account to copy its permissions and library order. "Built-in" gives every library, Live TV, downloads and SyncPlay, and nothing to manage or delete.</div>
+                    </div>
+
+                    <h3 style="margin-top:1.5em">The join page</h3>
+                    <p class="wl-muted">What new people read. Leave any of these empty for a plain default.</p>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="text" id="OwnerName" label="Your name, as they'd say it" maxlength="40" />
+                        <div class="fieldDescription">"Waiting for Sam", "Ask Sam". Empty: "the admin".</div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="text" id="ServerName" label="Server name" maxlength="40" />
+                        <div class="fieldDescription">Used in "New on ..." posts. Empty: Jellyfin.</div>
+                    </div>
+                    <div class="inputContainer">
+                        <div class="wl-muted" style="margin-bottom:.4em">Intro (the first paragraph)</div>
+                        <textarea id="IntroText" class="wl-text" maxlength="400"></textarea>
+                    </div>
+                    <div class="inputContainer">
+                        <div class="wl-muted" style="margin-bottom:.4em">What's inside: one tile per line, as Title=description</div>
+                        <textarea id="InsideTiles" class="wl-text" maxlength="1000" placeholder="Movies &amp; shows=The main library"></textarea>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="text" id="InsideNote" label="Note under the tiles (optional)" maxlength="300" />
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="text" id="MusicAppName" label="Music app name (optional)" maxlength="40" />
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="text" id="MusicAppUrl" label="Music app address" />
+                        <div class="fieldDescription">A web music player on the same accounts, for example Fretzpod. Empty: no music app step.</div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="text" id="MusicAppAbout" label="Music app, in a few words" maxlength="100" />
+                        <div class="fieldDescription">Finishes "(name) is ...", for example "an old-school iPod for the music library".</div>
+                    </div>
+
+                    <h3 style="margin-top:1.5em">New arrivals</h3>
+                    <p class="wl-muted">Posts new movies and episodes to a Discord channel your users can see. It never says who asked for anything.</p>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="password" id="NewArrivalsWebhookUrl" label="New arrivals webhook" autocomplete="off" />
+                        <div class="fieldDescription" id="wlArrivalsState">Use a webhook from a channel your users see, not your private one.</div>
+                    </div>
+                    <div class="wl-muted" style="margin:.5em 0">Announce from:</div>
+                    <div id="wlArrivalLibs"></div>
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="MinPasswordLength" label="Shortest password allowed" min="6" max="64" />
+                    </div>
+                    <div class="wl-row">
+                        <button is="emby-button" type="submit" class="raised button-submit wl-small"><span>Save</span></button>
+                        <button is="emby-button" type="button" id="wlTest" class="raised wl-small"><span>Send a test ping</span></button>
+                        <button is="emby-button" type="button" id="wlTestArrivals" class="raised wl-small"><span>Test the new arrivals post</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            (function () {
+                var pluginId = '99a863ba-0370-40a0-b6a4-23995415384b';
+                var page = document.querySelector('#WelcomeConfigPage');
+                var q = function (s) { return page.querySelector(s); };
+                // Names and notes are typed by whoever has an invite link: always escape.
+                var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+                var when = function (d) { return d ? new Date(d).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : ''; };
+
+                function call(method, path, body) {
+                    return fetch(ApiClient.getUrl(path), {
+                        method: method,
+                        headers: { 'Authorization': 'MediaBrowser Token="' + ApiClient.accessToken() + '"', 'Content-Type': 'application/json' },
+                        body: body ? JSON.stringify(body) : undefined
+                    }).then(function (r) {
+                        if (!r.ok) throw r;
+                        return r.status === 204 ? null : r.json();
+                    });
+                }
+
+                function copyButton(text) {
+                    var b = document.createElement('button');
+                    b.setAttribute('is', 'emby-button'); b.type = 'button'; b.className = 'raised wl-small'; b.innerHTML = '<span>Copy link</span>';
+                    b.addEventListener('click', function () {
+                        navigator.clipboard.writeText(text).then(function () { b.innerHTML = '<span>Copied</span>'; setTimeout(function () { b.innerHTML = '<span>Copy link</span>'; }, 1500); });
+                    });
+                    return b;
+                }
+
+                function stateText(i) {
+                    switch (i.state) {
+                        case 'open': return '<span class="wl-pill">Link sent</span> <span class="wl-muted">expires ' + esc(when(i.expires)) + '</span>';
+                        case 'pending': return '<span class="wl-pill pending">Wants in</span>';
+                        case 'approved': return '<span class="wl-pill">Approved, picking a password</span>';
+                        case 'done': return '<span class="wl-pill done">Joined as ' + esc(i.username) + '</span> <span class="wl-muted">' + esc(when(i.finished)) + '</span>';
+                        case 'expired': return '<span class="wl-pill">Expired</span>';
+                        default: return '<span class="wl-pill">Closed</span>';
+                    }
+                }
+
+                function act(path, method) {
+                    Dashboard.showLoadingMsg();
+                    call(method || 'POST', path).then(refresh, function () { Dashboard.hideLoadingMsg(); Dashboard.alert('That did not work. Refresh and try again.'); });
+                }
+
+                function refresh() {
+                    return call('GET', 'Welcome/admin/invites').then(function (data) {
+                        Dashboard.hideLoadingMsg();
+                        q('#wlArrivalsState').textContent = data.arrivalsSet
+                            ? 'A webhook is saved. Paste a new one only to replace it.'
+                            : 'Not set: nothing gets posted. Use a webhook from a channel your users see, not your private one.';
+                        q('#wlHookState').textContent = data.webhookSet
+                            ? 'A webhook is saved. Paste a new one only to replace it.'
+                            : 'Not set: nobody gets pinged. Discord channel settings, Integrations, Webhooks, New Webhook, Copy Webhook URL.';
+                        var pend = data.invites.filter(function (i) { return i.state === 'pending'; });
+                        var rest = data.invites.filter(function (i) { return i.state !== 'pending'; });
+
+                        var p = q('#wlPending'); p.innerHTML = '';
+                        if (!pend.length) p.innerHTML = '<p class="wl-muted">Nobody right now.</p>';
+                        pend.forEach(function (i) {
+                            var d = document.createElement('div'); d.className = 'wl-card';
+                            d.innerHTML = '<div class="wl-row"><div class="wl-grow"><b>' + esc(i.name) + '</b> wants in'
+                                + (i.label && i.label.toLowerCase() !== String(i.name).toLowerCase() ? ' <span class="wl-muted">(your invite for ' + esc(i.label) + ')</span>' : '')
+                                + '<div class="wl-muted">' + esc(when(i.requested)) + '</div></div>'
+                                + '<button is="emby-button" type="button" class="raised button-submit wl-small wl-yes"><span>Let them in</span></button>'
+                                + '<button is="emby-button" type="button" class="raised wl-small wl-no"><span>Decline</span></button></div>'
+                                + (i.note ? '<div class="wl-note">' + esc(i.note) + '</div>' : '');
+                            d.querySelector('.wl-yes').addEventListener('click', function () { act('Welcome/admin/invites/' + encodeURIComponent(i.code) + '/approve'); });
+                            d.querySelector('.wl-no').addEventListener('click', function () { if (confirm('Decline ' + i.name + '? Their link will stop working.')) act('Welcome/admin/invites/' + encodeURIComponent(i.code) + '/decline'); });
+                            p.appendChild(d);
+                        });
+
+                        var l = q('#wlList'); l.innerHTML = '';
+                        if (!rest.length) l.innerHTML = '<p class="wl-muted">None yet.</p>';
+                        rest.forEach(function (i) {
+                            var d = document.createElement('div'); d.className = 'wl-card';
+                            d.innerHTML = '<div class="wl-row"><div class="wl-grow"><b>' + esc(i.label) + '</b> ' + stateText(i) + '</div></div>';
+                            var row = d.querySelector('.wl-row');
+                            if (i.state === 'open') row.appendChild(copyButton(i.link));
+                            var del = document.createElement('button');
+                            del.setAttribute('is', 'emby-button'); del.type = 'button'; del.className = 'raised wl-small';
+                            del.innerHTML = '<span>' + (i.state === 'open' || i.state === 'approved' ? 'Cancel' : 'Remove') + '</span>';
+                            del.addEventListener('click', function () {
+                                var msg = i.state === 'done' ? 'Remove this from the list? Their Jellyfin account stays.' : 'Cancel this invite? The link will stop working.';
+                                if (confirm(msg)) act('Welcome/admin/invites/' + encodeURIComponent(i.code), 'DELETE');
+                            });
+                            row.appendChild(del);
+                            l.appendChild(d);
+                        });
+                    }, function () { Dashboard.hideLoadingMsg(); });
+                }
+
+                page.addEventListener('pageshow', function () {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                        q('#PublicUrl').value = config.PublicUrl || '';
+                        q('#DiscordWebhookUrl').value = '';
+                        q('#NewArrivalsWebhookUrl').value = '';
+                        var picked = (config.NewArrivalsLibraries || '').split(',').filter(Boolean);
+                        ApiClient.getVirtualFolders().then(function (libs) {
+                            var box = q('#wlArrivalLibs'); box.innerHTML = '';
+                            libs.filter(function (l) { return l.CollectionType === 'movies' || l.CollectionType === 'tvshows'; }).forEach(function (l) {
+                                var on = !picked.length || picked.indexOf(l.ItemId) >= 0;   // nothing saved = all of them
+                                var lab = document.createElement('label'); lab.style.display = 'block'; lab.style.margin = '.3em 0';
+                                lab.innerHTML = '<input type="checkbox" class="wlLib" value="' + esc(l.ItemId) + '"' + (on ? ' checked' : '') + '> ' + esc(l.Name);
+                                box.appendChild(lab);
+                            });
+                        });
+                        q('#InviteDays').value = config.InviteDays || 7;
+                        ['OwnerName', 'ServerName', 'IntroText', 'InsideTiles', 'InsideNote', 'MusicAppName', 'MusicAppUrl', 'MusicAppAbout'].forEach(function (k) { q('#' + k).value = config[k] || ''; });
+                        ApiClient.getUsers().then(function (users) {
+                            var sel = q('#TemplateUserId');
+                            sel.innerHTML = '<option value="">Built-in permissions</option>' + users
+                                .filter(function (u) { return !u.Policy.IsAdministrator; })
+                                .map(function (u) { return '<option value="' + esc(u.Id) + '">' + esc(u.Name) + '</option>'; }).join('');
+                            sel.value = config.TemplateUserId || '';
+                        });
+                        q('#MinPasswordLength').value = config.MinPasswordLength || 8;
+                        refresh();
+                    });
+                    clearInterval(page._wlTimer);
+                    // Keep the "Waiting for you" list current while the page is open.
+                    page._wlTimer = setInterval(function () { if (!document.hidden && page.offsetParent) refresh(); }, 15000);
+                });
+                page.addEventListener('pagehide', function () { clearInterval(page._wlTimer); });
+
+                q('#wlCreate').addEventListener('click', function () {
+                    var label = q('#wlLabel').value.trim();
+                    if (!label) { q('#wlLabel').focus(); return; }
+                    Dashboard.showLoadingMsg();
+                    call('POST', 'Welcome/admin/invites', { label: label }).then(function (inv) {
+                        q('#wlLabel').value = '';
+                        var n = q('#wlNew');
+                        n.innerHTML = '<div class="wl-card"><b>Invite for ' + esc(label) + '</b><p class="wl-muted">Text this to them. It works once and expires ' + esc(when(inv.expires)) + '.</p>'
+                            + '<div class="wl-link">' + esc(inv.link) + '</div><div class="wl-row" style="margin-top:10px"></div></div>';
+                        n.querySelector('.wl-row').appendChild(copyButton(inv.link));
+                        refresh();
+                    }, function () { Dashboard.hideLoadingMsg(); Dashboard.alert('Could not make the invite.'); });
+                });
+
+                q('#wlTest').addEventListener('click', function () {
+                    call('POST', 'Welcome/admin/test-discord').then(function () { Dashboard.alert('Sent. Check your Discord channel.'); }, function () { Dashboard.alert('Could not send. Save a webhook first.'); });
+                });
+
+                q('#wlTestArrivals').addEventListener('click', function () {
+                    call('POST', 'Welcome/admin/test-new-arrivals').then(function () { Dashboard.alert('Posted. Check the channel.'); }, function () { Dashboard.alert('Could not post. Save a webhook first.'); });
+                });
+
+                q('#WelcomeConfigForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                        config.PublicUrl = q('#PublicUrl').value.trim().replace(/\/+$/, '');
+                        var hook = q('#DiscordWebhookUrl').value.trim();
+                        if (hook) config.DiscordWebhookUrl = hook;   // blank keeps the saved one
+                        var arrivals = q('#NewArrivalsWebhookUrl').value.trim();
+                        if (arrivals) config.NewArrivalsWebhookUrl = arrivals;
+                        var boxes = page.querySelectorAll('.wlLib'), chosen = [];
+                        boxes.forEach(function (b) { if (b.checked) chosen.push(b.value); });
+                        // Empty means "every library", so none ticked can't be saved as empty.
+                        // (No boxes yet means the list hasn't loaded: keep what's saved.)
+                        if (boxes.length && !chosen.length) {
+                            Dashboard.hideLoadingMsg();
+                            Dashboard.alert('Tick at least one library to announce from. To stop the posts, remove the webhook in Discord.');
+                            return;
+                        }
+                        // All ticked is stored as empty, so libraries added later are included too.
+                        if (boxes.length) config.NewArrivalsLibraries = chosen.length === boxes.length ? '' : chosen.join(',');
+                        config.InviteDays = parseInt(q('#InviteDays').value, 10) || 7;
+                        config.TemplateUserId = q('#TemplateUserId').value;
+                        ['OwnerName', 'ServerName', 'IntroText', 'InsideTiles', 'InsideNote', 'MusicAppName', 'MusicAppUrl', 'MusicAppAbout'].forEach(function (k) { config[k] = q('#' + k).value.trim(); });
+                        config.MinPasswordLength = Math.max(6, parseInt(q('#MinPasswordLength').value, 10) || 8);
+                        ApiClient.updatePluginConfiguration(pluginId, config).then(function (r) {
+                            q('#DiscordWebhookUrl').value = '';
+                            q('#NewArrivalsWebhookUrl').value = '';
+                            Dashboard.processPluginConfigurationUpdateResult(r);
+                            refresh();
+                        });
+                    });
+                    return false;
+                });
+            })();
+        </script>
+    </div>
+</body>
+</html>

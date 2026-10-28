@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#14121a">
+<title>You're invited</title>
+<style>
+  :root {
+    --bg: #14121a; --card: #1e1b26; --line: #2e2a3a; --text: #f3f0f7; --muted: #a39cb3;
+    --accent: #f0a04b; --accent-ink: #2a1a06; --good: #63c98a; --bad: #e8736b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text);
+    font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body { display: flex; justify-content: center; padding: 28px 16px 48px;
+    background: radial-gradient(1200px 600px at 50% -200px, #2b2340 0%, var(--bg) 70%); }
+  main { width: 100%; max-width: 440px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 26px 22px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+  h1 { font-size: 27px; line-height: 1.2; margin: 6px 0 8px; letter-spacing: -.01em; }
+  h2 { font-size: 19px; margin: 22px 0 8px; }
+  p { margin: 0 0 12px; color: var(--muted); }
+  p.lead { color: var(--text); }
+  label { display: block; font-weight: 600; margin: 16px 0 6px; }
+  .hint { font-weight: 400; color: var(--muted); font-size: 14px; }
+  input, textarea { width: 100%; font: inherit; color: var(--text); background: #15131b; border: 1px solid var(--line);
+    border-radius: 12px; padding: 13px 14px; outline: none; }
+  input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,160,75,.18); }
+  textarea { min-height: 76px; resize: vertical; }
+  button, .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 20px;
+    font: inherit; font-weight: 700; border: 0; border-radius: 14px; padding: 15px 18px; cursor: pointer;
+    background: var(--accent); color: var(--accent-ink); text-decoration: none; }
+  button:disabled { opacity: .55; cursor: default; }
+  .btn.ghost, button.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+  .err { color: var(--bad); font-size: 15px; margin-top: 10px; min-height: 1em; }
+  .pw { position: relative; }
+  .pw button { position: absolute; right: 6px; top: 6px; width: auto; margin: 0; padding: 8px 12px; font-size: 14px;
+    background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 10px; }
+  .addr { display: flex; gap: 8px; align-items: stretch; margin: 8px 0 4px; }
+  .addr code { flex: 1; min-width: 0; overflow-wrap: anywhere; background: #15131b; border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px; font: 15px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text); }
+  .addr button { width: auto; margin: 0; padding: 0 16px; }
+  ol { padding-left: 22px; margin: 6px 0 4px; color: var(--muted); }
+  ol li { margin: 6px 0; }
+  ol b, p b { color: var(--text); }
+  .things { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .thing { background: #15131b; border: 1px solid var(--line); border-radius: 14px; padding: 12px; font-size: 15px; color: var(--muted); }
+  .thing b { display: block; color: var(--text); margin-bottom: 2px; }
+  details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+  summary { cursor: pointer; font-weight: 600; }
+  .foot { text-align: center; color: var(--muted); font-size: 14px; margin-top: 18px; }
+
+  /* The little TV */
+  .tv { width: 92px; height: 82px; margin: 0 auto 8px; position: relative; }
+  .tv .ant { position: absolute; top: 0; left: 50%; width: 46px; height: 26px; transform: translateX(-50%); }
+  .tv .ant::before, .tv .ant::after { content: ""; position: absolute; bottom: 0; width: 3px; height: 26px; background: var(--muted); border-radius: 2px; transform-origin: bottom center; }
+  .tv .ant::before { left: 12px; transform: rotate(-30deg); }
+  .tv .ant::after { right: 12px; transform: rotate(30deg); }
+  .tv .box { position: absolute; bottom: 0; left: 0; right: 0; height: 58px; border-radius: 14px; background: #2d2840; border: 3px solid #3c3554; padding: 7px; }
+  .tv .screen { width: 100%; height: 100%; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #e0679a); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .tv.wait .screen { background: repeating-linear-gradient(0deg, #5a5370 0 2px, #3b3550 2px 4px); animation: static .25s steps(2) infinite; }
+  .tv.wait .ant::before { animation: wiggle 1.6s ease-in-out infinite; }
+  .tv.wait .ant::after { animation: wiggle 1.6s ease-in-out infinite reverse; }
+  .tv.sad .screen { background: #3b3550; }
+  @keyframes static { 50% { background-position: 0 2px; } }
+  @keyframes wiggle { 0%, 100% { transform: rotate(-30deg); } 50% { transform: rotate(-12deg); } }
+  .dots::after { content: ""; animation: dots 1.4s steps(4) infinite; }
+  @keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<main><div class="card" id="app"><div class="tv wait"><div class="ant"></div><div class="box"><div class="screen"></div></div></div><p style="text-align:center">Loading<span class="dots"></span></p></div>
+<div class="foot" id="foot"></div></main>
+<script>
+(function () {
+  'use strict';
+  var app = document.getElementById('app');
+  var code = decodeURIComponent(location.pathname.replace(/\/+$/, '').split('/').pop() || '');
+  var api = function (p) { return new URL('../api/invite/' + encodeURIComponent(code) + p, location.href).toString(); };
+  var key = 'welcome-' + code;
+  var token = null;
+  try { token = localStorage.getItem(key); } catch (e) { /* private mode: works for this visit only */ }
+  var saveToken = function (t) { token = t; try { localStorage.setItem(key, t); } catch (e) {} };
+  var pollTimer = null;
+  // What the admin chose to show (Welcome/api/site): their name, the server's name, the
+  // intro and the "what's inside" tiles. Defaults until it loads, or if it can't.
+  var site = { owner: '', server: '', intro: '', tiles: [], note: '', musicApp: null };
+  function who() { return site.owner || 'the admin'; }
+  function Who() { var w = who(); return w.charAt(0).toUpperCase() + w.slice(1); }
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function tv(kind, face) { return '<div class="tv ' + (kind || '') + '"><div class="ant"></div><div class="box"><div class="screen">' + (face || '') + '</div></div></div>'; }
+  function show(html) { app.innerHTML = html; }
+  function $(sel) { return app.querySelector(sel); }
+
+  function post(path, body) {
+    return fetch(api(path), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j._ok = r.ok; j._status = r.status; return j; }); });
+  }
+
+  function load() {
+    // pollTimer is only set while waiting for approval; null everywhere else, so coming
+    // back to the page (say, from a password manager) doesn't redraw the password
+    // screen and wipe what was typed.
+    clearTimeout(pollTimer);
+    pollTimer = null;
+    if (!code || code === 'join') return dead('This link looks incomplete. Ask ' + who() + ' to send it again.');
+    fetch(api(token ? '?token=' + encodeURIComponent(token) : ''), { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw r; return r.json(); })
+      .then(render)
+      .catch(function () { dead("Couldn't reach the server. Check your connection and try again.", true); });
+  }
+
+  function render(s) {
+    var hi = s.label ? 'Hey ' + esc(s.label) + '!' : 'Hey there!';
+    switch (s.state) {
+      case 'open': return askScreen(s, hi);
+      case 'pending':
+        if (!s.mine) return dead('Someone already asked to join with this link. If that was you on another phone or browser, finish there, or ask ' + who() + ' for a new link.');
+        return waitScreen(s);
+      case 'approved':
+        if (!s.mine) return dead('This invite was already approved for someone. If that was you on another phone or browser, finish there.');
+        return passwordScreen(s);
+      case 'done':
+        if (!s.mine) return dead('This invite has already been used. Ask ' + who() + ' if you need a new one.');
+        return doneScreen(s.username, s.serverUrl);
+      case 'expired': return dead('This invite has expired. Ask ' + who() + ' for a fresh link.');
+      case 'closed': return dead('This invite is no longer active. Ask ' + who() + ' if you think that is a mistake.');
+      default: return dead("This invite link doesn't work. Ask " + who() + ' to send it again.');
+    }
+  }
+
+  function dead(msg, retry) {
+    show(tv('sad', '📺') + '<h1>Hmm.</h1><p class="lead">' + esc(msg) + '</p>' + (retry ? '<button id="retry" class="ghost">Try again</button>' : ''));
+    if (retry) $('#retry').onclick = load;
+  }
+
+  function askScreen(s, hi) {
+    show(tv('', '🍿') +
+      '<h1>' + hi + ' You\'re invited.</h1>' +
+      '<p class="lead">' + esc(site.intro || Who() + ' runs a movie and TV server and would like you to have a login.') + '</p>' +
+      '<label for="n">What should ' + esc(who()) + ' call you?</label><input id="n" autocomplete="name" maxlength="60">' +
+      '<label for="t">Anything you want to tell ' + esc(who()) + '? <span class="hint">(optional)</span></label><textarea id="t" maxlength="300" placeholder="Hi from the couch"></textarea>' +
+      '<button id="go">Ask to join</button><div class="err" id="e"></div>' +
+      '<p style="margin-top:14px;font-size:15px">' + esc(Who()) + ' will get a heads up and let you in. You\'ll pick your own password after that.</p>');
+    $('#n').value = s.label || '';
+    $('#go').onclick = function () {
+      var name = $('#n').value.trim(), note = $('#t').value.trim();
+      if (!name) { $('#e').textContent = 'Please put your name in.'; $('#n').focus(); return; }
+      this.disabled = true; $('#e').textContent = '';
+      post('/request', { name: name, note: note }).then(function (j) {
+        if (j._ok && j.token) { saveToken(j.token); load(); return; }
+        $('#go').disabled = false; $('#e').textContent = j.error || 'That didn\'t go through. Try again in a moment.';
+      }).catch(function () { $('#go').disabled = false; $('#e').textContent = 'That didn\'t go through. Check your connection.'; });
+    };
+  }
+
+  function waitScreen(s) {
+    show(tv('wait') +
+      '<h1>Waiting for ' + esc(who()) + '<span class="dots"></span></h1>' +
+      '<p class="lead">' + esc(Who()) + ' just got a message that ' + esc(s.name || 'you') + ' wants in. This page will update by itself once you\'re let in.</p>' +
+      '<p>You can close this and come back later. Just open the same link on this same phone or browser.</p>');
+    pollTimer = setTimeout(load, 5000);
+  }
+
+  function passwordScreen(s) {
+    show(tv('', '🎉') +
+      '<h1>You\'re in!</h1>' +
+      '<p class="lead">' + esc(Who()) + ' said yes. Last step: pick how you\'ll sign in. Only you will know this password.</p>' +
+      '<label for="u">Username <span class="hint">(what you type to sign in)</span></label><input id="u" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="40">' +
+      '<label for="p">Password <span class="hint">(at least ' + (s.minPassword || 8) + ' characters)</span></label>' +
+      '<div class="pw"><input id="p" type="password" autocomplete="new-password" maxlength="256"><button id="eye" type="button">Show</button></div>' +
+      '<button id="go">Create my login</button><div class="err" id="e"></div>');
+    $('#u').value = s.suggestedUsername || '';
+    $('#eye').onclick = function () { var p = $('#p'); var showIt = p.type === 'password'; p.type = showIt ? 'text' : 'password'; this.textContent = showIt ? 'Hide' : 'Show'; };
+    $('#go').onclick = function () {
+      var u = $('#u').value.trim(), p = $('#p').value;
+      if (!u) { $('#e').textContent = 'Pick a username.'; return; }
+      if (p.length < (s.minPassword || 8)) { $('#e').textContent = 'Your password needs at least ' + (s.minPassword || 8) + ' characters.'; return; }
+      this.disabled = true; $('#e').textContent = '';
+      post('/finish', { token: token, username: u, password: p }).then(function (j) {
+        if (j._ok) { doneScreen(j.username, j.serverUrl); return; }
+        $('#go').disabled = false; $('#e').textContent = j.error || 'That didn\'t work. Try again.';
+      }).catch(function () { $('#go').disabled = false; $('#e').textContent = 'That didn\'t go through. Check your connection.'; });
+    };
+  }
+
+  // "What's inside": the admin's tiles, two to a row; an odd last one gets the full row.
+  function tiles() {
+    var t = site.tiles && site.tiles.length ? site.tiles : [{ title: 'Movies & shows', text: 'The main library' }];
+    return '<div class="things">' + t.map(function (x, i) {
+      var wide = i === t.length - 1 && t.length % 2 === 1 && t.length > 1;
+      return '<div class="thing"' + (wide ? ' style="grid-column:1/-1"' : '') + '><b>' + esc(x.title) + '</b>' + esc(x.text) + '</div>';
+    }).join('') + '</div>';
+  }
+
+  function doneScreen(username, server) {
+    var ua = navigator.userAgent || '';
+    var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document);
+    var android = /Android/.test(ua);
+    var appBtn = ios
+      ? '<a class="btn" href="https://apps.apple.com/us/app/jellyfin-mobile/id1480192618" target="_blank" rel="noopener noreferrer">Get Jellyfin from the App Store</a>'
+      : android
+        ? '<a class="btn" href="https://play.google.com/store/apps/details?id=org.jellyfin.mobile" target="_blank" rel="noopener noreferrer">Get Jellyfin from Google Play</a>'
+        : '<a class="btn" href="' + esc(server) + '/web/" target="_blank" rel="noopener noreferrer">Open Jellyfin in your browser</a>';
+    // An optional web music app on the same accounts (settings: Music app).
+    var m = site.musicApp, mName = m && (m.name || 'The music app');
+    var podStep = !m ? '' :
+      '<h2>4. Music on your phone</h2>' +
+      '<p>' + esc(mName) + ' is ' + esc(m.about || 'a music player for the library') + '. Open it in ' + (ios ? 'Safari' : 'Chrome') +
+      ' and sign in with the same username and password.</p>' +
+      '<a class="btn" href="' + esc(m.url) + '" target="_blank" rel="noopener noreferrer">Open ' + esc(mName) + '</a>' +
+      '<p style="margin-top:12px">To keep it like an app, ' +
+      (ios ? 'tap Share, then <b>Add to Home Screen</b>.' : 'open Chrome\'s menu (⋮) and tap <b>Install app</b>.') + '</p>';
+    show(tv('', '✨') +
+      '<h1>All set, ' + esc(username) + '!</h1>' +
+      '<p class="lead">Your login is ready. Here\'s how to start watching.</p>' +
+      '<h2>1. Get the app</h2>' + appBtn +
+      '<h2>2. Connect to the server</h2>' +
+      '<p>When the app asks for a server, use this address:</p>' +
+      '<div class="addr"><code id="addr">' + esc(server) + '</code><button id="copy" type="button">Copy</button></div>' +
+      '<p>Then sign in as <b>' + esc(username) + '</b> with the password you just picked.</p>' +
+      '<h2>3. Watch on a TV</h2>' +
+      '<p>Search your TV\'s app store for <b>Jellyfin</b> (Roku, Fire TV, Google TV, LG). On Apple TV, get <b>Swiftfin</b>. Skip typing your password with a remote:</p>' +
+      '<ol><li>Open Jellyfin on the TV and enter the server address above.</li>' +
+      '<li>Pick <b>Quick Connect</b>. The TV shows a short code.</li>' +
+      '<li>On your phone, open Jellyfin, tap your profile picture, choose <b>Quick Connect</b> and type the code.</li></ol>' +
+      podStep +
+      '<h2>What\'s inside</h2>' +
+      tiles() +
+      (site.note ? '<p style="margin-top:14px;font-size:15px">' + esc(site.note) + '</p>' : '') +
+      '<details><summary>Forgot your password later?</summary><p style="margin-top:8px">Ask ' + esc(who()) + ', who can reset it for you, and you\'ll pick a new one.</p></details>');
+    $('#copy').onclick = function () {
+      var b = this;
+      var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1800); };
+      if (navigator.clipboard) navigator.clipboard.writeText(server).then(done, function () { selectAddr(); });
+      else selectAddr();
+    };
+    function selectAddr() { var r = document.createRange(); r.selectNodeContents($('#addr')); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+  }
+
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && pollTimer) load(); });
+  function start(data) {
+    if (data) site = data;
+    var foot = site.owner ? site.owner + '\'s movie and TV server' : (site.server || 'Jellyfin');
+    document.getElementById('foot').textContent = foot;
+    load();
+  }
+  fetch(new URL('../api/site', location.href).toString(), { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(start, function () { start(null); });
+})();
+</script>
+</body>
+</html>

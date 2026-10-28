@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Jellyfin 12.x runs on .NET 10; the 12.2.0 packages target net10.0. -->
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Jellyfin.Plugin.Welcome</RootNamespace>
+    <AssemblyName>Jellyfin.Plugin.Welcome</AssemblyName>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <FileVersion>0.3.0.0</FileVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Compile against the host's API only (see the Tuner plugin for why runtime is excluded). -->
+    <PackageReference Include="Jellyfin.Controller" Version="12.2.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Jellyfin.Model" Version="12.2.0" ExcludeAssets="runtime" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Web\join.html" LogicalName="Welcome.Web.join.html" />
+    <EmbeddedResource Include="Configuration\configPage.html" LogicalName="Welcome.Configuration.configPage.html" />
+  </ItemGroup>
+
+</Project>
