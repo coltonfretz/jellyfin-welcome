@@ -1,0 +1,20 @@
+[
+  {
+    "guid": "99a863ba-0370-40a0-b6a4-23995415384b",
+    "name": "Welcome",
+    "description": "Invite links with admin approval: new users pick their own password.",
+    "overview": "Invite links you approve one by one, a friendly setup page for new users, and optional Discord pings and new-arrival posts.",
+    "owner": "coltonfretz",
+    "category": "General",
+    "versions": [
+      {
+        "version": "0.3.0.0",
+        "changelog": "First public release: invite links, approval, setup page, template user, new-arrival posts",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/coltonfretz/jellyfin-welcome/releases/download/v0.3.0.0/welcome_0.3.0.0.zip",
+        "checksum": "669606649f1b55d5aceb4167ec8f5e0b",
+        "timestamp": "2026-10-28T11:57:00Z"
+      }
+    ]
+  }
+]
