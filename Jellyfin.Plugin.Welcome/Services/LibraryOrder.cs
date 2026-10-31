@@ -8,7 +8,8 @@ namespace Jellyfin.Plugin.Welcome.Services;
 /// <summary>
 /// Gives a newly created account the same library order as the template user's (if set)
 /// or the server admin's, so the top bar and "My Media" row follow the order the admin
-/// picked instead of Jellyfin's alphabetical default.
+/// picked instead of Jellyfin's alphabetical default. Libraries that account hides from
+/// My Media are hidden on the new account too.
 ///
 /// WHY copy an existing account's order instead of a list in the plugin: the admin changes
 /// the order in their own Settings > Home screen, and new people simply follow, with nothing to keep in
@@ -53,10 +54,29 @@ public sealed class LibraryOrder
                 .Select(v => v.Id)
                 .ToArray();
 
+            // The libraries the source account hides from My Media come along too. Without
+            // this a new account showed every library, Collections included, until something
+            // else hid it (on Fretzflix the Tuner plugin's nightly run). Matched by name for
+            // the same reason as the order. Anything the new account already hides stays.
+            var source = _users.GetUserDto(admin, null).Configuration;
+            var hiddenNames = ViewsFor(admin, includeHidden: true)
+                .Where(v => source.MyMediaExcludes.Contains(v.Id))
+                .Select(v => v.Name)
+                .ToHashSet();
+
             var config = _users.GetUserDto(user, null).Configuration;
             config.OrderedViews = ordered;
+            config.MyMediaExcludes = ViewsFor(user, includeHidden: true)
+                .Where(v => hiddenNames.Contains(v.Name))
+                .Select(v => v.Id)
+                .Union(config.MyMediaExcludes)
+                .ToArray();
             await _users.UpdateConfigurationAsync(user.Id, config).ConfigureAwait(false);
-            _logger.LogInformation("Welcome: gave {Username} the library order {Order}", user.Username, string.Join(" / ", wanted));
+            _logger.LogInformation(
+                "Welcome: gave {Username} the library order {Order} (hidden from My Media: {Hidden})",
+                user.Username,
+                string.Join(" / ", wanted),
+                hiddenNames.Count > 0 ? string.Join(" / ", hiddenNames) : "none");
         }
         catch (Exception ex)
         {
@@ -65,6 +85,8 @@ public sealed class LibraryOrder
     }
 
     // A user's views in the order they see them (their OrderedViews, if any, applied).
-    private MediaBrowser.Controller.Entities.Folder[] ViewsFor(User u) =>
-        _views.GetUserViews(new UserViewQuery { User = u, IncludeHidden = false });
+    // includeHidden: false leaves out what they hide from My Media (that's what Jellyfin's
+    // IncludeHidden means), true lists everything they can see.
+    private MediaBrowser.Controller.Entities.Folder[] ViewsFor(User u, bool includeHidden = false) =>
+        _views.GetUserViews(new UserViewQuery { User = u, IncludeHidden = includeHidden });
 }

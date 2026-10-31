@@ -52,7 +52,7 @@ Every setting has a plain default, so an empty install works.
 
 **Built-in permissions** (when no template account is picked): every library, Live TV, downloads, SyncPlay, casting to shared devices; nothing to manage or delete, no controlling other people's sessions, hidden from the login screen's user list. If that's more than you want new people to have, make one account the way you want and pick it as the template.
 
-New accounts also get the template's (or the first admin's) **library order**, so the top bar and My Media row read the way you set them up instead of alphabetically. If that step fails, sign-up still finishes with the default order.
+New accounts also get the template's (or the first admin's) **library order** and the libraries it **hides from My Media**, so the top bar and My Media row read the way you set them up instead of alphabetically. If that step fails, sign-up still finishes with the default order.
 
 ## Security
 
