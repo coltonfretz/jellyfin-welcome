@@ -5,18 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#14121a">
+<meta name="theme-color" content="#0b0917">
 <title>You're invited</title>
 <style>
+  /* Black and violet, the same family as the Fretzflix Night theme (0.4.0.0; it was orange
+     and pink, so the first page a friend saw didn't look like the server). The button
+     violet is a shade darker than the theme's #7b5cff so white text on it passes AA (5.4:1). */
   :root {
-    --bg: #14121a; --card: #1e1b26; --line: #2e2a3a; --text: #f3f0f7; --muted: #a39cb3;
-    --accent: #f0a04b; --accent-ink: #2a1a06; --good: #63c98a; --bad: #e8736b;
+    --bg: #0b0917; --card: #14102a; --line: #2a2350; --text: #ece8ff; --muted: #b3acd6;
+    --accent: #6a4bf0; --accent-hi: #9d85ff; --accent-ink: #ffffff; --good: #63c98a; --bad: #ef8a82;
+    --field: #0f0c22;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text);
     font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
   body { display: flex; justify-content: center; padding: 28px 16px 48px;
-    background: radial-gradient(1200px 600px at 50% -200px, #2b2340 0%, var(--bg) 70%); }
+    background: radial-gradient(1200px 600px at 50% -200px, #2a1f5c 0%, var(--bg) 70%); }
   main { width: 100%; max-width: 440px; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 26px 22px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
   h1 { font-size: 27px; line-height: 1.2; margin: 6px 0 8px; letter-spacing: -.01em; }
@@ -25,9 +29,10 @@
   p.lead { color: var(--text); }
   label { display: block; font-weight: 600; margin: 16px 0 6px; }
   .hint { font-weight: 400; color: var(--muted); font-size: 14px; }
-  input, textarea { width: 100%; font: inherit; color: var(--text); background: #15131b; border: 1px solid var(--line);
+  input, textarea { width: 100%; font: inherit; color: var(--text); background: var(--field); border: 1px solid var(--line);
     border-radius: 12px; padding: 13px 14px; outline: none; }
-  input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,160,75,.18); }
+  input:focus, textarea:focus { border-color: var(--accent-hi); box-shadow: 0 0 0 3px rgba(123,92,255,.28); }
+  button:focus-visible, .btn:focus-visible, summary:focus-visible { outline: 2px solid var(--accent-hi); outline-offset: 2px; }
   textarea { min-height: 76px; resize: vertical; }
   button, .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 20px;
     font: inherit; font-weight: 700; border: 0; border-radius: 14px; padding: 15px 18px; cursor: pointer;
@@ -39,14 +44,14 @@
   .pw button { position: absolute; right: 6px; top: 6px; width: auto; margin: 0; padding: 8px 12px; font-size: 14px;
     background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 10px; }
   .addr { display: flex; gap: 8px; align-items: stretch; margin: 8px 0 4px; }
-  .addr code { flex: 1; min-width: 0; overflow-wrap: anywhere; background: #15131b; border: 1px solid var(--line);
+  .addr code { flex: 1; min-width: 0; overflow-wrap: anywhere; background: var(--field); border: 1px solid var(--line);
     border-radius: 12px; padding: 12px; font: 15px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text); }
   .addr button { width: auto; margin: 0; padding: 0 16px; }
   ol { padding-left: 22px; margin: 6px 0 4px; color: var(--muted); }
   ol li { margin: 6px 0; }
   ol b, p b { color: var(--text); }
   .things { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-  .thing { background: #15131b; border: 1px solid var(--line); border-radius: 14px; padding: 12px; font-size: 15px; color: var(--muted); }
+  .thing { background: var(--field); border: 1px solid var(--line); border-radius: 14px; padding: 12px; font-size: 15px; color: var(--muted); }
   .thing b { display: block; color: var(--text); margin-bottom: 2px; }
   details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
   summary { cursor: pointer; font-weight: 600; }
@@ -58,12 +63,12 @@
   .tv .ant::before, .tv .ant::after { content: ""; position: absolute; bottom: 0; width: 3px; height: 26px; background: var(--muted); border-radius: 2px; transform-origin: bottom center; }
   .tv .ant::before { left: 12px; transform: rotate(-30deg); }
   .tv .ant::after { right: 12px; transform: rotate(30deg); }
-  .tv .box { position: absolute; bottom: 0; left: 0; right: 0; height: 58px; border-radius: 14px; background: #2d2840; border: 3px solid #3c3554; padding: 7px; }
-  .tv .screen { width: 100%; height: 100%; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #e0679a); display: flex; align-items: center; justify-content: center; font-size: 22px; }
-  .tv.wait .screen { background: repeating-linear-gradient(0deg, #5a5370 0 2px, #3b3550 2px 4px); animation: static .25s steps(2) infinite; }
+  .tv .box { position: absolute; bottom: 0; left: 0; right: 0; height: 58px; border-radius: 14px; background: #221a48; border: 3px solid #3a2f73; padding: 7px; }
+  .tv .screen { width: 100%; height: 100%; border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--accent-hi)); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .tv.wait .screen { background: repeating-linear-gradient(0deg, #5b5091 0 2px, #342a66 2px 4px); animation: static .25s steps(2) infinite; }
   .tv.wait .ant::before { animation: wiggle 1.6s ease-in-out infinite; }
   .tv.wait .ant::after { animation: wiggle 1.6s ease-in-out infinite reverse; }
-  .tv.sad .screen { background: #3b3550; }
+  .tv.sad .screen { background: #342a66; }
   @keyframes static { 50% { background-position: 0 2px; } }
   @keyframes wiggle { 0%, 100% { transform: rotate(-30deg); } 50% { transform: rotate(-12deg); } }
   .dots::after { content: ""; animation: dots 1.4s steps(4) infinite; }
@@ -87,7 +92,7 @@
   var pollTimer = null;
   // What the admin chose to show (Welcome/api/site): their name, the server's name, the
   // intro and the "what's inside" tiles. Defaults until it loads, or if it can't.
-  var site = { owner: '', server: '', intro: '', tiles: [], note: '', musicApp: null };
+  var site = { owner: '', server: '', intro: '', tiles: [], note: '', musicApp: null, tvApp: null };
   function who() { return site.owner || 'the admin'; }
   function Who() { var w = who(); return w.charAt(0).toUpperCase() + w.slice(1); }
 
@@ -140,7 +145,7 @@
 
   function askScreen(s, hi) {
     show(tv('', '🍿') +
-      '<h1>' + hi + ' You\'re invited.</h1>' +
+      '<h1>' + hi + ' You\'re invited' + (site.server ? ' to ' + esc(site.server) : '') + '.</h1>' +
       '<p class="lead">' + esc(site.intro || Who() + ' runs a movie and TV server and would like you to have a login.') + '</p>' +
       '<label for="n">What should ' + esc(who()) + ' call you?</label><input id="n" autocomplete="name" maxlength="60">' +
       '<label for="t">Anything you want to tell ' + esc(who()) + '? <span class="hint">(optional)</span></label><textarea id="t" maxlength="300" placeholder="Hi from the couch"></textarea>' +
@@ -206,6 +211,15 @@
       : android
         ? '<a class="btn" href="https://play.google.com/store/apps/details?id=org.jellyfin.mobile" target="_blank" rel="noopener noreferrer">Get Jellyfin from Google Play</a>'
         : '<a class="btn" href="' + esc(server) + '/web/" target="_blank" rel="noopener noreferrer">Open Jellyfin in your browser</a>';
+    // TV: the admin's own TV app first, if there is one (settings: TV app), for the TVs it's
+    // made for; the stock Jellyfin apps for everything else. Before 0.4.0.0 everyone was sent
+    // to stock Jellyfin, even on the Fire TVs a custom app replaces.
+    var t = site.tvApp, tName = t && (t.name || 'Our TV app');
+    var tvStep = t
+      ? '<p>On a <b>' + esc(t.devices || 'Fire TV or Android TV') + '</b>, get <b>' + esc(tName) + '</b>. Its setup page walks you through it.</p>' +
+        '<a class="btn" href="' + esc(t.url) + '" target="_blank" rel="noopener noreferrer">' + esc(tName) + ' setup</a>' +
+        '<p style="margin-top:14px">On other TVs, search the app store for <b>Jellyfin</b> (Roku, LG and others). On Apple TV, get <b>Swiftfin</b>. Skip typing your password with a remote:</p>'
+      : '<p>Search your TV\'s app store for <b>Jellyfin</b> (Roku, Fire TV, Google TV, LG). On Apple TV, get <b>Swiftfin</b>. Skip typing your password with a remote:</p>';
     // An optional web music app on the same accounts (settings: Music app).
     var m = site.musicApp, mName = m && (m.name || 'The music app');
     var podStep = !m ? '' :
@@ -223,8 +237,7 @@
       '<p>When the app asks for a server, use this address:</p>' +
       '<div class="addr"><code id="addr">' + esc(server) + '</code><button id="copy" type="button">Copy</button></div>' +
       '<p>Then sign in as <b>' + esc(username) + '</b> with the password you just picked.</p>' +
-      '<h2>3. Watch on a TV</h2>' +
-      '<p>Search your TV\'s app store for <b>Jellyfin</b> (Roku, Fire TV, Google TV, LG). On Apple TV, get <b>Swiftfin</b>. Skip typing your password with a remote:</p>' +
+      '<h2>3. Watch on a TV</h2>' + tvStep +
       '<ol><li>Open Jellyfin on the TV and enter the server address above.</li>' +
       '<li>Pick <b>Quick Connect</b>. The TV shows a short code.</li>' +
       '<li>On your phone, open Jellyfin, tap your profile picture, choose <b>Quick Connect</b> and type the code.</li></ol>' +
@@ -246,7 +259,9 @@
   function start(data) {
     if (data) site = data;
     var foot = site.owner ? site.owner + '\'s movie and TV server' : (site.server || 'Jellyfin');
+    if (site.server && site.owner) foot = site.server + ', ' + foot;
     document.getElementById('foot').textContent = foot;
+    if (site.server) document.title = 'You\'re invited to ' + site.server;
     load();
   }
   fetch(new URL('../api/site', location.href).toString(), { cache: 'no-store' })

@@ -8,7 +8,7 @@ Invite links for new users, with you approving each one, so nobody's password ev
 
 ## How it works
 
-1. **Dashboard > Plugins > Welcome > Invite someone:** type who it's for, copy the link, send it.
+1. **Dashboard -> Plugins -> Welcome -> Invite someone:** type who it's for, copy the link, send it.
 2. They open it on their phone, type their name, and tap **Ask to join**.
 3. You get a Discord ping (optional) with a link back to the Welcome page. **Let them in** or **Decline**.
 4. Their page flips to "You're in!" by itself, and they pick their own username and password.
@@ -22,10 +22,10 @@ Needs Jellyfin 12.2 or newer.
 
 **From the plugin catalog (gets update notices):**
 
-1. Dashboard > Plugins > **Repositories** (on some versions, the gear icon on the Catalog page) > add:
+1. Dashboard -> Plugins -> **Repositories** (on some versions, the gear icon on the Catalog page) -> add:
    - Name: `Welcome`
    - URL: `https://raw.githubusercontent.com/coltonfretz/jellyfin-welcome/main/manifest.json`
-2. Dashboard > Plugins > **Catalog** > Welcome > Install.
+2. Dashboard -> Plugins -> **Catalog** -> Welcome -> Install.
 3. Restart Jellyfin.
 
 **By hand:** download `welcome_<version>.zip` from [Releases](https://github.com/coltonfretz/jellyfin-welcome/releases), put `Jellyfin.Plugin.Welcome.dll` in a folder named `Welcome_<version>` inside Jellyfin's plugins folder (`/config/plugins` in the official Docker image), and restart Jellyfin.
@@ -34,7 +34,7 @@ The join page lives at `/Welcome/join/<code>` on your server, so it has to be re
 
 ## Settings
 
-Dashboard > Plugins > Welcome, under the invite list.
+Dashboard -> Plugins -> Welcome, under the invite list.
 
 | Setting | What it does |
 |---|---|
@@ -45,6 +45,7 @@ Dashboard > Plugins > Welcome, under the invite list.
 | Your name / Server name | What the join page calls you ("Waiting for Sam", "Ask Sam") and the server ("New on ..." posts). |
 | Intro, What's inside, Note | The join page's first paragraph, the tiles on the finished page (`Title=description`, one per line), and a note under them. |
 | Music app | Optional name, address and a few words about a web music player on the same accounts (for example [Fretzpod](https://github.com/coltonfretz/fretzpod)). It adds a "Music on your phone" step. |
+| TV app | Optional name, setup page and which TVs (default "Fire TV or Android TV") for a TV app of your own. The TV step then points those TVs at its setup page and keeps the stock Jellyfin apps for every other TV. |
 | New arrivals webhook and libraries | Where new-arrival posts go, and which movie and TV libraries to announce from. |
 | Shortest password | Minimum length for the password people pick (default 8). |
 

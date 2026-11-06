@@ -89,6 +89,7 @@ public partial class WelcomeController : ControllerBase
             .Where(t => t.title.Length > 0)
             .Take(12);
         var music = Cfg.MusicAppUrl.Trim();
+        var tvApp = Cfg.TvAppUrl.Trim();
         return Ok(new
         {
             owner = Cfg.OwnerName.Trim(),
@@ -97,11 +98,17 @@ public partial class WelcomeController : ControllerBase
             tiles,
             note = Cfg.InsideNote.Trim(),
             // Only plain web addresses: this goes into a link on the page.
-            musicApp = music.StartsWith("https://", StringComparison.OrdinalIgnoreCase) || music.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            musicApp = IsWebAddress(music)
                 ? new { name = Cfg.MusicAppName.Trim(), url = music, about = Cfg.MusicAppAbout.Trim() }
+                : null,
+            tvApp = IsWebAddress(tvApp)
+                ? new { name = Cfg.TvAppName.Trim(), url = tvApp, devices = Cfg.TvAppDevices.Trim() }
                 : null,
         });
     }
+
+    private static bool IsWebAddress(string url) =>
+        url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) || url.StartsWith("http://", StringComparison.OrdinalIgnoreCase);
 
     [HttpGet("api/invite/{code}")]
     [AllowAnonymous]

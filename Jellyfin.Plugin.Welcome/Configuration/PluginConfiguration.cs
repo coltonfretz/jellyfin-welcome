@@ -69,4 +69,17 @@ public class PluginConfiguration : BasePluginConfiguration
     public string MusicAppUrl { get; set; } = string.Empty;
 
     public string MusicAppAbout { get; set; } = string.Empty;
+
+    /// <summary>
+    /// An optional TV app of your own (for example Fretzflix TV for Fire TV): its name, the
+    /// address of its setup guide, and which TVs it's for. Empty address: the TV step only
+    /// offers the stock Jellyfin apps. Added 0.4.0.0, because the finished page sent every
+    /// friend to stock Jellyfin even on the TVs the custom app replaces.
+    /// </summary>
+    public string TvAppName { get; set; } = string.Empty;
+
+    public string TvAppUrl { get; set; } = string.Empty;
+
+    /// <summary>Which TVs, as the page says it: "Fire TV or Android TV". Empty: that wording.</summary>
+    public string TvAppDevices { get; set; } = string.Empty;
 }
