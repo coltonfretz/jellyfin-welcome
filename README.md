@@ -1,81 +1,101 @@
 # Welcome (Jellyfin plugin)
 
-Invite links for new users, with you approving each one, so nobody's password ever travels through a chat message.
+Invite links for new users. You approve each one and they pick their own password, so no password ever goes through a chat message.
 
-> Built with Claude for my own server and shared as is. It works on my setup (Jellyfin 12.4). Updated as needed. Issues and pull requests are welcome.
+> Built with Claude for my own server and shared as is. Tested on Jellyfin 12.4. Issues and pull requests are welcome.
 
 <img src="screenshots/join.webp" alt="The join page on a phone: Hey Jordan! You're invited, a name box, an optional note and an Ask to join button" width="300">
 
+## Contents
+
+- [How it works](#how-it-works)
+- [Install](#install)
+- [Settings](#settings)
+- [New accounts](#new-accounts)
+- [Security](#security)
+- [Build and release](#build-and-release)
+
 ## How it works
 
-1. **Dashboard -> Plugins -> Welcome -> Invite someone:** type who it's for, copy the link, send it.
-2. They open it on their phone, type their name, and tap **Ask to join**.
-3. You get a Discord ping (optional) with a link back to the Welcome page. **Let them in** or **Decline**.
-4. Their page flips to "You're in!" by itself, and they pick their own username and password.
-5. They get a short setup page: which app to get, the server address with a copy button, Quick Connect for TVs, and what's on the server.
+1. **Dashboard -> Plugins -> Welcome -> Invite someone:** name it, copy the link, send it.
+2. They open it and tap **Ask to join**.
+3. You get a Discord ping (optional) and choose **Let them in** or **Decline**.
+4. Their page updates by itself and they pick a username and password.
+5. A setup page follows: which app to get, the server address, Quick Connect for TVs, and what's on the server.
 
-Optional extra: **new arrivals.** New movies and episodes are posted to a Discord channel your users can see, batched (a season pack is one post), and without ever saying who requested anything.
+**Optional:** new movies and episodes posted to a Discord channel, batched, never saying who requested them.
 
 ## Install
 
 Needs Jellyfin 12.2 or newer.
 
-**From the plugin catalog (gets update notices):**
+**From the catalog (gets update notices)**
 
-1. Dashboard -> Plugins -> **Repositories** (on some versions, the gear icon on the Catalog page) -> add:
-   - Name: `Welcome`
-   - URL: `https://raw.githubusercontent.com/coltonfretz/jellyfin-welcome/main/manifest.json`
+1. Dashboard -> Plugins -> **Repositories** -> add `https://raw.githubusercontent.com/coltonfretz/jellyfin-welcome/main/manifest.json` (name it `Welcome`).
 2. Dashboard -> Plugins -> **Catalog** -> Welcome -> Install.
 3. Restart Jellyfin.
 
-**By hand:** download `welcome_<version>.zip` from [Releases](https://github.com/coltonfretz/jellyfin-welcome/releases), put `Jellyfin.Plugin.Welcome.dll` in a folder named `Welcome_<version>` inside Jellyfin's plugins folder (`/config/plugins` in the official Docker image), and restart Jellyfin.
+**By hand:** unzip `Jellyfin.Plugin.Welcome.dll` from [Releases](https://github.com/coltonfretz/jellyfin-welcome/releases) into `<plugins>/Welcome_<version>/` (`/config/plugins` in the Docker image) and restart.
 
-The join page lives at `/Welcome/join/<code>` on your server, so it has to be reachable from wherever the people you invite are. That's usually the same address they'll use for Jellyfin.
+The join page is `/Welcome/join/<code>` on your server, so it must be reachable wherever your invitees are (usually your public Jellyfin address).
 
 ## Settings
 
-Dashboard -> Plugins -> Welcome, under the invite list.
+Dashboard -> Plugins -> Welcome, below the invite list. Every setting has a working default.
+
+**Links and alerts**
 
 | Setting | What it does |
 |---|---|
-| Public address | The address people use from outside, for example `https://jellyfin.example.com`. Invite links, the setup page and Discord links use it. Empty: links use the address the page was opened at, and Discord posts go out without links. |
-| Discord webhook | "Someone wants in" pings. Use a private channel. The value stays on the server; the page only shows whether one is saved. |
+| Public address | e.g. `https://jellyfin.example.com`, used in invite links, the setup page and Discord. Empty: the address the page was opened at. |
+| Discord webhook | "Someone wants in" pings. Use a private channel. Never shown back on the page. |
 | Invite links last | Days an unused link stays valid (1 to 60, default 7). |
-| New accounts copy their permissions from | A non-admin account whose permissions and library order new accounts get. Default: built-in permissions (below). An administrator is never used, even if picked by mistake. |
-| Your name / Server name | What the join page calls you ("Waiting for Sam", "Ask Sam") and the server ("New on ..." posts). |
-| Intro, What's inside, Note | The join page's first paragraph, the tiles on the finished page (`Title=description`, one per line), and a note under them. |
-| Music app | Optional name, address and a few words about a web music player on the same accounts (for example [Fretzpod](https://github.com/coltonfretz/fretzpod)). It adds a "Music on your phone" step. |
-| TV app | Optional name, setup page and which TVs (default "Fire TV or Android TV") for a TV app of your own. The TV step then points those TVs at its setup page and keeps the stock Jellyfin apps for every other TV. |
-| New arrivals webhook and libraries | Where new-arrival posts go, and which movie and TV libraries to announce from. |
-| Shortest password | Minimum length for the password people pick (default 8). |
+| Shortest password | Minimum password length (default 8). |
 
-Every setting has a plain default, so an empty install works.
+**What the pages say**
 
-**Built-in permissions** (when no template account is picked): every library, Live TV, downloads, SyncPlay, casting to shared devices; nothing to manage or delete, no controlling other people's sessions, hidden from the login screen's user list. If that's more than you want new people to have, make one account the way you want and pick it as the template.
+| Setting | What it does |
+|---|---|
+| Your name / Server name | "Waiting for Sam", "You're invited to (server)". |
+| Intro | The join page's first paragraph. |
+| What's inside | Tiles on the setup page, `Title=description`, one per line. |
+| Note | A line under the tiles. |
+| Music app | Name, address and a short description of a web music player on the same accounts (e.g. [Fretzpod](https://github.com/coltonfretz/fretzpod)). Adds a "Music on your phone" step. |
+| TV app | Name, setup page and which TVs (default "Fire TV or Android TV") for your own TV app. Those TVs get its setup page; others get the stock Jellyfin apps. |
 
-New accounts also get the template's (or the first admin's) **library order** and the libraries it **hides from My Media**, so the top bar and My Media row read the way you set them up instead of alphabetically. If that step fails, sign-up still finishes with the default order.
+**Accounts and new arrivals**
+
+| Setting | What it does |
+|---|---|
+| Copy permissions from | A non-admin template account. Empty: the built-in permissions below. |
+| New arrivals webhook + libraries | Where new-arrival posts go and which libraries to announce. |
+
+## New accounts
+
+- **Built-in permissions** (no template): every library, Live TV, downloads, SyncPlay, casting. Nothing to manage or delete, no control of others' sessions, hidden from the login screen's user list.
+- Want less? Make one account the way you like and pick it as the template. Admin accounts are never used as a template.
+- New accounts copy the template's (or first admin's) **library order** and **hidden-from-My-Media** libraries. If that fails, sign-up still finishes.
 
 ## Security
 
-- Invite codes are 128-bit random, single-use, and expire. They're compared in constant time.
-- Asking to join hands that browser a 256-bit token (only its hash is stored). Only the browser that asked can finish, so a forwarded link can't claim an approved account.
-- No account exists until you approve. Finishing is one at a time, so a double tap can't make two accounts, and a failed setup deletes the half-made account.
-- Wrong codes are throttled, and at most 10 requests can wait at once.
-- Names and notes typed by visitors are escaped everywhere (Discord ping, admin page). Discord posts can't @mention anyone and typed links don't become clickable.
-- The join page sends no Referer (the code is in its address), can't be framed, and is never cached.
-- Admin endpoints need a Jellyfin administrator. The only public endpoints are the join page, the invite steps (each needs a valid code), and the join page's wording.
-- Invites live in `invites.json` in the plugin's data folder. Ones that are over (account made, declined, or expired unused) are deleted 30 days after they end; the Jellyfin account is the lasting record.
+- **Codes:** 128-bit random, single-use, expiring, compared in constant time. Wrong guesses are throttled; at most 10 requests wait at once.
+- **Claiming:** asking hands that browser a 256-bit token (only its hash is stored), so a forwarded link can't claim an approved account.
+- **Accounts:** none exists until you approve. One finish at a time; a failed setup deletes the half-made account.
+- **Visitor text** is escaped everywhere. Discord posts can't @mention anyone and links aren't clickable.
+- **The join page** sends no Referer, can't be framed, and is never cached.
+- **Endpoints:** admin ones need an administrator. Public ones are the join page, the invite steps (valid code required) and the page wording.
+- **Data:** invites live in `invites.json` in the plugin data folder and are deleted 30 days after they end.
 
-## Build
+## Build and release
 
 ```bash
 ./build.sh
 ```
 
-Builds `dist/Jellyfin.Plugin.Welcome.dll` in the official .NET 10 SDK container, so Docker is all you need. `BUILD_HOST=user@host ./build.sh` builds on another machine over SSH.
+Builds `dist/Jellyfin.Plugin.Welcome.dll` in the .NET 10 SDK container (Docker only). `BUILD_HOST=user@host ./build.sh` builds over SSH.
 
-For a new version, bump `<AssemblyVersion>` in the `.csproj`, commit, then `./release.sh "what changed"` builds it, makes the GitHub Release, and adds it to `manifest.json`.
+To release: bump `<AssemblyVersion>` in the `.csproj`, commit, then `./release.sh "what changed"`.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
