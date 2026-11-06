@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "0.4.0.0",
+        "changelog": "Optional TV app step, purple invite page, server name in the invite",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/coltonfretz/jellyfin-welcome/releases/download/v0.4.0.0/welcome_0.4.0.0.zip",
+        "checksum": "a453f27b0fe332b458bcc35721fef36b",
+        "timestamp": "2026-11-06T15:16:27Z"
+      },
+      {
         "version": "0.3.1.0",
         "changelog": "New accounts also get the libraries the template or admin account hides from My Media",
         "targetAbi": "12.2.0.0",
