@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "0.4.1.0",
+        "changelog": "Approved invites expire after 7 days; invite secret kept out of URLs",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/coltonfretz/jellyfin-welcome/releases/download/v0.4.1.0/welcome_0.4.1.0.zip",
+        "checksum": "43e593afc3c5321db9d01f4e5168789b",
+        "timestamp": "2026-11-10T03:17:13Z"
+      },
+      {
         "version": "0.4.0.0",
         "changelog": "Optional TV app step, purple invite page, server name in the invite",
         "targetAbi": "12.2.0.0",
