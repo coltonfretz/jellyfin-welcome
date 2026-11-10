@@ -54,6 +54,9 @@ public sealed class Invite
 
     public string? Username { get; set; }
 
+    /// <summary>When an admin let them in. Starts the <see cref="InviteStore.ApprovedFor"/> clock.</summary>
+    public DateTimeOffset? ApprovedAt { get; set; }
+
     /// <summary>When the link was spent: account made (Done) or declined/withdrawn (Closed).</summary>
     public DateTimeOffset? Finished { get; set; }
 }
@@ -72,6 +75,26 @@ public sealed class Invite
 public sealed class InviteStore
 {
     private static readonly TimeSpan KeepEnded = TimeSpan.FromDays(30);
+
+    /// <summary>
+    /// How long an approved invite waits for its username and password (2026-11-09,
+    /// security review). Before, an approved but unfinished invite stayed usable forever,
+    /// so a browser token copied off someone's phone months later could still claim the
+    /// account. A friend who comes back after this sees "expired" and asks for a new link.
+    /// </summary>
+    public static readonly TimeSpan ApprovedFor = TimeSpan.FromDays(7);
+
+    /// <summary>
+    /// The invite can no longer be used: an open link past its date, or an approval
+    /// nobody finished within <see cref="ApprovedFor"/>. Shown as "expired".
+    /// </summary>
+    public static bool Lapsed(Invite i) => i.State switch
+    {
+        InviteState.Open => i.Expires < DateTimeOffset.UtcNow,
+        // Invites approved before 2026-11-09 have no ApprovedAt; asking is close enough.
+        InviteState.Approved => (i.ApprovedAt ?? i.Requested ?? i.Created) + ApprovedFor < DateTimeOffset.UtcNow,
+        _ => false,
+    };
 
     private static readonly JsonSerializerOptions Json = new()
     {
@@ -185,7 +208,8 @@ public sealed class InviteStore
         // Older files have no Finished on declined invites; when they were asked for is close enough.
         InviteState.Done or InviteState.Closed => i.Finished ?? i.Requested ?? i.Created,
         InviteState.Open => i.Expires,      // in the future (not ended) until it expires
-        _ => null,                          // Pending/Approved: still waiting on someone
+        InviteState.Approved => (i.ApprovedAt ?? i.Requested ?? i.Created) + ApprovedFor,
+        _ => null,                          // Pending: still waiting on the admin
     };
 
     private List<Invite> Load()

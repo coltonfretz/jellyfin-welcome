@@ -113,7 +113,8 @@
     clearTimeout(pollTimer);
     pollTimer = null;
     if (!code || code === 'join') return dead('This link looks incomplete. Ask ' + who() + ' to send it again.');
-    fetch(api(token ? '?token=' + encodeURIComponent(token) : ''), { cache: 'no-store' })
+    // The token goes in a header, never the URL, so it can't land in an access log.
+    fetch(api(''), { cache: 'no-store', headers: token ? { 'X-Welcome-Token': token } : {} })
       .then(function (r) { if (!r.ok) throw r; return r.json(); })
       .then(render)
       .catch(function () { dead("Couldn't reach the server. Check your connection and try again.", true); });

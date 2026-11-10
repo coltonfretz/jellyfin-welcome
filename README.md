@@ -79,10 +79,11 @@ Dashboard -> Plugins -> Welcome, below the invite list. Every setting has a work
 ## Security
 
 - **Codes:** 128-bit random, single-use, expiring, compared in constant time. Wrong guesses are throttled; at most 10 requests wait at once.
-- **Claiming:** asking hands that browser a 256-bit token (only its hash is stored), so a forwarded link can't claim an approved account.
-- **Accounts:** none exists until you approve. One finish at a time; a failed setup deletes the half-made account.
+- **Claiming:** asking hands that browser a 256-bit token (only its hash is stored), so a forwarded link can't claim an approved account. The token travels in a request header, never in a URL, so it stays out of access logs.
+- **Approvals run out:** an approved invite has 7 days to be finished, then it shows as expired.
+- **Accounts:** none exists until you approve. One finish at a time; a failed setup deletes the half-made account (and logs a critical error if even that fails, so it can be removed by hand).
 - **Visitor text** is escaped everywhere. Discord posts can't @mention anyone and links aren't clickable.
-- **The join page** sends no Referer, can't be framed, and is never cached.
+- **The join page** sends no Referer, can't be framed, is never cached, and has a strict Content-Security-Policy. A reverse proxy that sets its own CSP header for Jellyfin should leave `/Welcome` alone, or it replaces this one.
 - **Endpoints:** admin ones need an administrator. Public ones are the join page, the invite steps (valid code required) and the page wording.
 - **Data:** invites live in `invites.json` in the plugin data folder and are deleted 30 days after they end.
 

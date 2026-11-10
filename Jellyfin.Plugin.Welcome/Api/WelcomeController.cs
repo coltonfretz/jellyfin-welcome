@@ -112,7 +112,7 @@ public partial class WelcomeController : ControllerBase
 
     [HttpGet("api/invite/{code}")]
     [AllowAnonymous]
-    public IActionResult Status(string code, [FromQuery] string? token)
+    public IActionResult Status(string code, [FromHeader(Name = "X-Welcome-Token")] string? token)
     {
         var inv = Lookup(code);
         if (inv is null)
@@ -120,8 +120,11 @@ public partial class WelcomeController : ControllerBase
             return Throttled() ? StatusCode(StatusCodes.Status429TooManyRequests) : Ok(new { state = "invalid" });
         }
 
+        // The browser's token comes in a header, not the URL (2026-11-09): URLs end up in
+        // access logs (proxies, Jellyfin's slow-request warnings), and the code plus the
+        // token there would be enough to finish someone else's approved sign-up.
         var mine = token is { Length: > 0 } && inv.TokenHash == InviteStore.Hash(token);
-        var state = inv.State == InviteState.Open && inv.Expires < DateTimeOffset.UtcNow ? "expired" : inv.State.ToString().ToLowerInvariant();
+        var state = InviteStore.Lapsed(inv) ? "expired" : inv.State.ToString().ToLowerInvariant();
         return Ok(new
         {
             state,
@@ -203,6 +206,11 @@ public partial class WelcomeController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, new { error = "This link isn't ready to finish yet." });
         }
 
+        if (InviteStore.Lapsed(inv))
+        {
+            return StatusCode(StatusCodes.Status410Gone, new { error = "This invite has expired. Ask for a fresh link." });
+        }
+
         var username = (body.Username ?? string.Empty).Trim();
         var password = body.Password ?? string.Empty;
         if (!UsernameRegex().IsMatch(username) || username.Length > 40)
@@ -220,7 +228,7 @@ public partial class WelcomeController : ControllerBase
         try
         {
             inv = _store.Find(code);
-            if (inv is null || inv.State != InviteState.Approved)
+            if (inv is null || inv.State != InviteState.Approved || InviteStore.Lapsed(inv))
             {
                 return Conflict(new { error = "This invite was already used." });
             }
@@ -260,7 +268,17 @@ public partial class WelcomeController : ControllerBase
             {
                 // Never leave a half-made account behind (it would have no password).
                 _logger.LogError(ex, "Welcome: setting up {Username} failed; removing the account", username);
-                await _users.DeleteUserAsync(user.Id).ConfigureAwait(false);
+                try
+                {
+                    await _users.DeleteUserAsync(user.Id).ConfigureAwait(false);
+                }
+                catch (Exception deleteEx)
+                {
+                    // Two failures in a row (2026-11-09 review): the account may still exist
+                    // with no password. Say so as loudly as the log allows so it gets deleted
+                    // by hand (Dashboard -> Users).
+                    _logger.LogCritical(deleteEx, "Welcome: COULD NOT REMOVE half-made account {Username}. It may have no password: delete it in Dashboard -> Users now", username);
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Something went wrong on the server. Try again in a minute." });
             }
 
@@ -297,7 +315,7 @@ public partial class WelcomeController : ControllerBase
             code = i.Code,
             link = $"{PublicUrl}/Welcome/join/{i.Code}",
             label = i.Label,
-            state = i.State == InviteState.Open && i.Expires < DateTimeOffset.UtcNow ? "expired" : i.State.ToString().ToLowerInvariant(),
+            state = InviteStore.Lapsed(i) ? "expired" : i.State.ToString().ToLowerInvariant(),
             created = i.Created,
             expires = i.Expires,
             name = i.Name,
@@ -327,7 +345,7 @@ public partial class WelcomeController : ControllerBase
     [HttpPost("admin/invites/{code}/approve")]
     [Authorize(Policy = "RequiresElevation")]
     public IActionResult Approve(string code)
-        => _store.Update(code, i => { if (i.State != InviteState.Pending) { return false; } i.State = InviteState.Approved; return true; }) is null
+        => _store.Update(code, i => { if (i.State != InviteState.Pending) { return false; } i.State = InviteState.Approved; i.ApprovedAt = DateTimeOffset.UtcNow; return true; }) is null
             ? Conflict()
             : NoContent();
 
