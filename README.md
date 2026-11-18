@@ -74,7 +74,7 @@ Dashboard -> Plugins -> Welcome, below the invite list. Every setting has a work
 
 - **Built-in permissions** (no template): every library, Live TV, downloads, SyncPlay, casting. Nothing to manage or delete, no control of others' sessions, hidden from the login screen's user list.
 - Want less? Make one account the way you like and pick it as the template. Admin accounts are never used as a template.
-- New accounts copy the template's (or first admin's) **library order** and **hidden-from-My-Media** libraries. If that fails, sign-up still finishes.
+- New accounts copy the template's (or first admin's) **library order**, **hidden-from-My-Media** libraries and **playback and display settings**: audio and subtitle language, subtitle mode, default audio track, remembered audio/subtitle choices, next-episode autoplay, missing episodes, collections view, hidden "Latest" rows and grouped folders. Set them up once on that account and every new friend starts the same. If copying fails, sign-up still finishes.
 
 ## Security
 

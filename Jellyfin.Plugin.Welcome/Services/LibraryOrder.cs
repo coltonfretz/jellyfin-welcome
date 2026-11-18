@@ -9,7 +9,8 @@ namespace Jellyfin.Plugin.Welcome.Services;
 /// Gives a newly created account the same library order as the template user's (if set)
 /// or the server admin's, so the top bar and "My Media" row follow the order the admin
 /// picked instead of Jellyfin's alphabetical default. Libraries that account hides from
-/// My Media are hidden on the new account too.
+/// My Media are hidden on the new account too, and since 0.4.2.0 its playback and
+/// display settings (languages, subtitles, autoplay, Latest rows) come along as well.
 ///
 /// WHY copy an existing account's order instead of a list in the plugin: the admin changes
 /// the order in their own Settings > Home screen, and new people simply follow, with nothing to keep in
@@ -71,17 +72,58 @@ public sealed class LibraryOrder
                 .Select(v => v.Id)
                 .Union(config.MyMediaExcludes)
                 .ToArray();
+
+            // The source account's playback and display choices come along too (0.4.2.0).
+            // WHY: before this a new account got Jellyfin's blank defaults (no audio or
+            // subtitle language, for one) even when every existing account was set up the
+            // same way, and the admin had to fix each new one by hand. Only the settings
+            // anyone sees under Settings > Playback / Subtitles / Home screen; never
+            // EnableLocalPassword (a sign-in rule) or CastReceiverId (a device choice).
+            config.AudioLanguagePreference = source.AudioLanguagePreference;
+            config.SubtitleLanguagePreference = source.SubtitleLanguagePreference;
+            config.SubtitleMode = source.SubtitleMode;
+            config.PlayDefaultAudioTrack = source.PlayDefaultAudioTrack;
+            config.RememberAudioSelections = source.RememberAudioSelections;
+            config.RememberSubtitleSelections = source.RememberSubtitleSelections;
+            config.EnableNextEpisodeAutoPlay = source.EnableNextEpisodeAutoPlay;
+            config.DisplayMissingEpisodes = source.DisplayMissingEpisodes;
+            config.DisplayCollectionsView = source.DisplayCollectionsView;
+            config.HidePlayedInLatest = source.HidePlayedInLatest;
+
+            // "Latest" rows the source turned off on its home screen, and libraries it
+            // groups into one view: matched by name like the order above.
+            config.LatestItemsExcludes = IdsByName(user, source.LatestItemsExcludes, admin);
+            config.GroupedFolders = IdsByName(user, source.GroupedFolders, admin);
+
             await _users.UpdateConfigurationAsync(user.Id, config).ConfigureAwait(false);
             _logger.LogInformation(
-                "Welcome: gave {Username} the library order {Order} (hidden from My Media: {Hidden})",
+                "Welcome: gave {Username} {Source}'s library order {Order} (hidden from My Media: {Hidden}) and playback settings (audio {Audio}, subtitles {Subs}, {Mode})",
                 user.Username,
+                admin.Username,
                 string.Join(" / ", wanted),
-                hiddenNames.Count > 0 ? string.Join(" / ", hiddenNames) : "none");
+                hiddenNames.Count > 0 ? string.Join(" / ", hiddenNames) : "none",
+                string.IsNullOrEmpty(config.AudioLanguagePreference) ? "any" : config.AudioLanguagePreference,
+                string.IsNullOrEmpty(config.SubtitleLanguagePreference) ? "any" : config.SubtitleLanguagePreference,
+                config.SubtitleMode);
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Welcome: couldn't set the library order for {Username}; it keeps Jellyfin's default", user.Username);
         }
+    }
+
+    // The source account's view ids -> the same views (by name) on the new account.
+    // Names the new account doesn't have are dropped.
+    private Guid[] IdsByName(User user, IEnumerable<Guid> sourceIds, User source)
+    {
+        var names = ViewsFor(source, includeHidden: true)
+            .Where(v => sourceIds.Contains(v.Id))
+            .Select(v => v.Name)
+            .ToHashSet();
+        return ViewsFor(user, includeHidden: true)
+            .Where(v => names.Contains(v.Name))
+            .Select(v => v.Id)
+            .ToArray();
     }
 
     // A user's views in the order they see them (their OrderedViews, if any, applied).
