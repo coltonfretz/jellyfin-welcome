@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "0.4.2.0",
+        "changelog": "New accounts also copy the template or admin account's playback and display settings: audio and subtitle language, subtitle mode, autoplay, Latest rows",
+        "targetAbi": "12.2.0.0",
+        "sourceUrl": "https://github.com/coltonfretz/jellyfin-welcome/releases/download/v0.4.2.0/welcome_0.4.2.0.zip",
+        "checksum": "b2ef62e7bedb2fc951b44bd9a8b84eb2",
+        "timestamp": "2026-11-18T08:17:07Z"
+      },
+      {
         "version": "0.4.1.0",
         "changelog": "Approved invites expire after 7 days; invite secret kept out of URLs",
         "targetAbi": "12.2.0.0",
